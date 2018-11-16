@@ -30,7 +30,10 @@
  * @author Bert Vandenbroucke (bert.vandenbroucke@gmail.com)
  */
 #include "Assert.hpp"
+#include "NeuralNetwork.hpp"
 #include "RiemannSolver.hpp"
+
+#include <fstream>
 
 /**
  * @brief Run a Rieman solver test.
@@ -104,6 +107,26 @@ int main(int argc, char **argv) {
   }
 
   nnr_status("All tests successfully finished!");
+
+  /// generate training data for neural network
+  RiemannSolver solver(5. / 3.);
+  std::ofstream ofile("training_data.txt");
+  ofile << "# rhoL\tuL\tPL\trhoR\tuR\tPR\tstructure\n";
+  for (uint_fast32_t i = 0; i < 10000; ++i) {
+    const double rhoL = random_double() * 100.;
+    const double rhoR = random_double() * 100.;
+    const double uL = (random_double() - 0.5) * 200.;
+    const double uR = (random_double() - 0.5) * 200.;
+    const double PL = random_double() * 100.;
+    const double PR = random_double() * 100.;
+
+    double rhosol, usol, Psol;
+    RiemannSolver::RiemannSolutionStructure solstruct =
+        solver.solve(rhoL, uL, PL, rhoR, uR, PR, rhosol, usol, Psol);
+
+    ofile << rhoL << "\t" << uL << "\t" << PL << "\t" << rhoR << "\t" << uR
+          << "\t" << PR << "\t" << solstruct << "\n";
+  }
 
   return 0;
 }
