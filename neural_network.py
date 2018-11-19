@@ -4,6 +4,10 @@ import pylab as pl
 def sigmoid(x):
   return 1. / (1. + np.exp(-x))
 
+eta = 0.001
+layer1 = 5
+layer2 = 10
+
 np.random.seed(42)
 
 x = np.random.random((1000,6))
@@ -23,19 +27,24 @@ y[ie,4] = 1.
 
 ref_result = np.round(y[:,1] + 2. * y[:,2] + 3. * y[:,3] + 4. * y[:,4])
 
-hidden_w = np.random.normal(size = (x.shape[1], 10))
-hidden_bias = np.random.normal(size = 10)
+hidden1_w = np.random.normal(size = (x.shape[1], layer1))
+hidden1_bias = np.random.normal(size = layer1)
 
-hidden_z = np.dot(x, hidden_w) + hidden_bias
-hidden_a = sigmoid(hidden_z)
+hidden1_z = np.dot(x, hidden1_w) + hidden1_bias
+hidden1_a = sigmoid(hidden1_z)
 
-output_w = np.random.normal(size = (10, y.shape[1]))
+hidden2_w = np.random.normal(size = (layer1, layer2))
+hidden2_bias = np.random.normal(size = layer2)
+
+hidden2_z = np.dot(hidden1_a, hidden2_w) + hidden2_bias
+hidden2_a = sigmoid(hidden2_z)
+
+output_w = np.random.normal(size = (layer2, y.shape[1]))
 output_bias = np.random.normal(size = y.shape[1])
 
-output_z = np.dot(hidden_a, output_w) + output_bias
+output_z = np.dot(hidden2_a, output_w) + output_bias
 output_a = sigmoid(output_z)
 
-eta = 0.002
 for t in range(100000):
   batch = np.random.randint(0, x.shape[0], 100)
 
@@ -47,25 +56,35 @@ for t in range(100000):
 #  output_delta = np.multiply(Ca, output_a * (1. - output_a))
   # cross-entropy
   output_delta = Ca
-  hidden_delta = np.multiply(np.dot(output_delta, output_w.T),
-                             hidden_a[batch,:] * (1. - hidden_a[batch,:]))
+  hidden2_delta = np.multiply(np.dot(output_delta, output_w.T),
+                              hidden2_a[batch,:] * (1. - hidden2_a[batch,:]))
+  hidden1_delta = np.multiply(np.dot(hidden2_delta, hidden2_w.T),
+                              hidden1_a[batch,:] * (1. - hidden1_a[batch,:]))
 
-  output_w -= eta * np.dot(hidden_a[batch,:].T, output_delta)
+  output_w -= eta * np.dot(hidden2_a[batch,:].T, output_delta)
   output_bias -= eta * output_delta.sum()
 
-  hidden_w -= eta * np.dot(x[batch,:].T, hidden_delta)
-  hidden_bias -= eta * hidden_delta.sum()
+  hidden2_w -= eta * np.dot(hidden1_a[batch,:].T, hidden2_delta)
+  hidden2_bias -= eta * hidden2_delta.sum()
 
-  hidden_z = np.dot(x, hidden_w) + hidden_bias
-  hidden_a = sigmoid(hidden_z)
+  hidden1_w -= eta * np.dot(x[batch,:].T, hidden1_delta)
+  hidden1_bias -= eta * hidden1_delta.sum()
 
-  output_z = np.dot(hidden_a, output_w) + output_bias
+  hidden1_z = np.dot(x, hidden1_w) + hidden1_bias
+  hidden1_a = sigmoid(hidden1_z)
+
+  hidden2_z = np.dot(hidden1_a, hidden2_w) + hidden2_bias
+  hidden2_a = sigmoid(hidden2_z)
+
+  output_z = np.dot(hidden2_a, output_w) + output_bias
   output_a = sigmoid(output_z)
 
 control = np.random.random((10000,6))
-hidden_z = np.dot(control, hidden_w) + hidden_bias
-hidden_a = sigmoid(hidden_z)
-output_z = np.dot(hidden_a, output_w) + output_bias
+hidden1_z = np.dot(control, hidden1_w) + hidden1_bias
+hidden1_a = sigmoid(hidden1_z)
+hidden2_z = np.dot(hidden1_a, hidden2_w) + hidden2_bias
+hidden2_a = sigmoid(hidden2_z)
+output_z = np.dot(hidden2_a, output_w) + output_bias
 output_a = sigmoid(output_z)
 
 result = np.round(output_a[:,1] + 2. * output_a[:,2] + 3. * output_a[:,3] +

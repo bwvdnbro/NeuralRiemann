@@ -112,17 +112,30 @@ int main(int argc, char **argv) {
   RiemannSolver solver(5. / 3.);
   std::ofstream ofile("training_data.txt");
   ofile << "# rhoL\tuL\tPL\trhoR\tuR\tPR\tstructure\n";
+  uint_fast32_t ndone[5] = {0, 0, 0, 0, 0};
   for (uint_fast32_t i = 0; i < 10000; ++i) {
-    const double rhoL = random_double() * 100.;
-    const double rhoR = random_double() * 100.;
-    const double uL = (random_double() - 0.5) * 200.;
-    const double uR = (random_double() - 0.5) * 200.;
-    const double PL = random_double() * 100.;
-    const double PR = random_double() * 100.;
+    double rhoL = random_double() * 100.;
+    double rhoR = random_double() * 100.;
+    double uL = (random_double() - 0.5) * 200.;
+    double uR = (random_double() - 0.5) * 200.;
+    double PL = random_double() * 100.;
+    double PR = random_double() * 100.;
 
     double rhosol, usol, Psol;
     RiemannSolver::RiemannSolutionStructure solstruct =
         solver.solve(rhoL, uL, PL, rhoR, uR, PR, rhosol, usol, Psol);
+    while (ndone[solstruct] == 2000) {
+      rhoL = random_double() * 100.;
+      rhoR = random_double() * 100.;
+      uL = (random_double() - 0.5) * 200.;
+      uR = (random_double() - 0.5) * 200.;
+      PL = random_double() * 100.;
+      PR = random_double() * 100.;
+
+      solstruct = solver.solve(rhoL, uL, PL, rhoR, uR, PR, rhosol, usol, Psol);
+    }
+
+    ++ndone[solstruct];
 
     ofile << rhoL << "\t" << uL << "\t" << PL << "\t" << rhoR << "\t" << uR
           << "\t" << PR << "\t" << solstruct << "\n";
