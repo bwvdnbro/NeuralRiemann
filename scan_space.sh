@@ -1,3 +1,5 @@
+#! /bin/bash
+
 for N1 in {5..12}
 do
   for N2 in {5..15}
