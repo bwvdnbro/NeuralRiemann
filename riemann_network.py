@@ -7,6 +7,7 @@ hidden2_N = 10
 eta = 0.0001
 epoch = 10000
 Nbatch = 500
+decay = 0.1
 
 argparser = argparse.ArgumentParser()
 argparser.add_argument("--N1", "-m", action = "store", default = hidden1_N,
@@ -19,6 +20,8 @@ argparser.add_argument("--epoch", "-t", action = "store", default = epoch,
                        type = int)
 argparser.add_argument("--Nbatch", "-b", action = "store", default = Nbatch,
                        type = int)
+argparser.add_argument("--decay", "-d", action = "store", default = decay,
+                       type = float)
 args = argparser.parse_args()
 
 hidden1_N = args.N1
@@ -26,6 +29,7 @@ hidden2_N = args.N2
 eta = args.eta
 epoch = args.epoch
 Nbatch = args.Nbatch
+decay = args.decay
 
 def sigmoid(x):
   return 1. / (1. + np.exp(-x))
@@ -83,12 +87,15 @@ for t in range(epoch):
   hidden1_delta = np.multiply(np.dot(hidden2_delta, hidden2_w.T),
                               hidden1_a * (1. - hidden1_a))
 
+  output_w *= (1. - eta * decay)
   output_w -= eta * np.dot(hidden2_a.T, output_delta) / len(batch)
   output_bias -= eta * output_delta.sum() / len(batch)
 
+  hidden2_w *= (1. - eta * decay)
   hidden2_w -= eta * np.dot(hidden1_a.T, hidden2_delta) / len(batch)
   hidden2_bias -= eta * hidden2_delta.sum() / len(batch)
 
+  hidden1_w *= (1. - eta * decay)
   hidden1_w -= eta * np.dot(x[batch,:].T, hidden1_delta) / len(batch)
   hidden1_bias -= eta * hidden1_delta.sum() / len(batch)
 

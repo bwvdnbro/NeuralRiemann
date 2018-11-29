@@ -31,9 +31,6 @@
 #include <fstream>
 #include <iostream>
 
-/*! @brief Number of hidden neurons in the neural network. */
-#define NETWORK_SIZE 2
-
 /*! @brief Number of training epochs. */
 #define TRAINING_SIZE 1e5
 
@@ -41,7 +38,7 @@
 #define WEIGHT_DECAY 1.
 
 /*! @brief Network learning rate. */
-#define LEARNING_RATE 0.1
+#define LEARNING_RATE 1.0
 
 /**
  * @brief Generate a uniformly distributed pseudo random number.

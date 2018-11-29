@@ -1,6 +1,8 @@
-for N1 in {5..12}
+#! /bin/bash
+
+for N1 in {3..15}
 do
-  for N2 in {5..15}
+  for N2 in {5..25}
   do
     python riemann_network.py --N1 $N1 --N2 $N2 --epoch 100000 --Nbatch 100 \
       --eta 0.01
