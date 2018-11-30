@@ -68,5 +68,35 @@ int main(int argc, char **argv) {
   assert_condition(d(1, 0) == 7.);
   assert_condition(d(1, 1) == 10.);
 
+  Matrix<2, 2> e = hadamard_product(a, b);
+
+  assert_condition(e(0, 0) == 0.);
+  assert_condition(e(0, 1) == 2.);
+  assert_condition(e(1, 0) == 3.);
+  assert_condition(e(1, 1) == 8.);
+
+  e *= 2.;
+
+  assert_condition(e(0, 0) == 0.);
+  assert_condition(e(0, 1) == 4.);
+  assert_condition(e(1, 0) == 6.);
+  assert_condition(e(1, 1) == 16.);
+
+  Matrix<2, 2> f = e * 0.5;
+
+  assert_condition(f(0, 0) == 0.);
+  assert_condition(f(0, 1) == 2.);
+  assert_condition(f(1, 0) == 3.);
+  assert_condition(f(1, 1) == 8.);
+
+  Matrix<2, 2> g = 0.5 * e;
+
+  assert_condition(g(0, 0) == 0.);
+  assert_condition(g(0, 1) == 2.);
+  assert_condition(g(1, 0) == 3.);
+  assert_condition(g(1, 1) == 8.);
+
+  assert_condition(g.sum() == 13.);
+
   return 0;
 }

@@ -109,8 +109,45 @@ public:
     }
     return *this;
   }
+
+  /**
+   * @brief Multiply the matrix with the given scalar.
+   *
+   * @param s Scalar to multiply with.
+   * @return Reference to the resulting matrix.
+   */
+  inline Matrix &operator*=(const double s) {
+    for (uint_fast32_t m = 0; m < _M_; ++m) {
+      for (uint_fast32_t n = 0; n < _N_; ++n) {
+        _matrix[m][n] *= s;
+      }
+    }
+    return *this;
+  }
+
+  /**
+   * @brief Get the sum of all the elements in the matrix.
+   *
+   * @return Sum of all the elements in the matrix.
+   */
+  inline double sum() const {
+    double result = 0.;
+    for (uint_fast32_t m = 0; m < _M_; ++m) {
+      for (uint_fast32_t n = 0; n < _N_; ++n) {
+        result += _matrix[m][n];
+      }
+    }
+    return result;
+  }
 };
 
+/**
+ * @brief Return the matrix product of a and b.
+ *
+ * @param a Matrix a.
+ * @param b Matrix b.
+ * @return New matrix containing the matrix product of a and b.
+ */
 template <uint_fast32_t _M_, uint_fast32_t _N_, uint_fast32_t _O_>
 static inline Matrix<_M_, _O_> operator*(const Matrix<_M_, _N_> &a,
                                          const Matrix<_N_, _O_> &b) {
@@ -123,6 +160,53 @@ static inline Matrix<_M_, _O_> operator*(const Matrix<_M_, _N_> &a,
     }
   }
   return c;
+}
+
+/**
+ * @brief Return the element-wise (hadamard) product of a and b.
+ *
+ * @param a Matrix a.
+ * @param b Matrix b.
+ * @return New matrix containing the element-wise product of a and b.
+ */
+template <uint_fast32_t _M_, uint_fast32_t _N_>
+static inline Matrix<_M_, _N_> hadamard_product(const Matrix<_M_, _N_> &a,
+                                                const Matrix<_M_, _N_> &b) {
+  Matrix<_M_, _N_> c;
+  for (uint_fast32_t m = 0; m < _M_; ++m) {
+    for (uint_fast32_t n = 0; n < _N_; ++n) {
+      c(m, n) = a(m, n) * b(m, n);
+    }
+  }
+  return c;
+}
+
+/**
+ * @brief Multiply the given matrix and scalar.
+ *
+ * @param a Matrix.
+ * @param s Scalar.
+ * @return Resulting product matrix.
+ */
+template <uint_fast32_t _M_, uint_fast32_t _N_>
+static inline Matrix<_M_, _N_> operator*(const Matrix<_M_, _N_> &a,
+                                         const double s) {
+  Matrix<_M_, _N_> b(a);
+  return b *= s;
+}
+
+/**
+ * @brief Multiply the given matrix and scalar.
+ *
+ * @param s Scalar.
+ * @param a Matrix.
+ * @return Resulting product matrix.
+ */
+template <uint_fast32_t _M_, uint_fast32_t _N_>
+static inline Matrix<_M_, _N_> operator*(const double s,
+                                         const Matrix<_M_, _N_> &a) {
+  Matrix<_M_, _N_> b(a);
+  return b *= s;
 }
 
 #endif // MATRIX_HPP
