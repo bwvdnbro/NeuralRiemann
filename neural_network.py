@@ -62,13 +62,13 @@ for t in range(100000):
                               hidden1_a[batch,:] * (1. - hidden1_a[batch,:]))
 
   output_w -= eta * np.dot(hidden2_a[batch,:].T, output_delta)
-  output_bias -= eta * output_delta.sum()
+  output_bias -= eta * output_delta.sum(0)
 
   hidden2_w -= eta * np.dot(hidden1_a[batch,:].T, hidden2_delta)
-  hidden2_bias -= eta * hidden2_delta.sum()
+  hidden2_bias -= eta * hidden2_delta.sum(0)
 
   hidden1_w -= eta * np.dot(x[batch,:].T, hidden1_delta)
-  hidden1_bias -= eta * hidden1_delta.sum()
+  hidden1_bias -= eta * hidden1_delta.sum(0)
 
   hidden1_z = np.dot(x, hidden1_w) + hidden1_bias
   hidden1_a = sigmoid(hidden1_z)

@@ -89,15 +89,15 @@ for t in range(epoch):
 
   output_w *= (1. - eta * decay)
   output_w -= eta * np.dot(hidden2_a.T, output_delta) / len(batch)
-  output_bias -= eta * output_delta.sum() / len(batch)
+  output_bias -= eta * output_delta.sum(0) / len(batch)
 
   hidden2_w *= (1. - eta * decay)
   hidden2_w -= eta * np.dot(hidden1_a.T, hidden2_delta) / len(batch)
-  hidden2_bias -= eta * hidden2_delta.sum() / len(batch)
+  hidden2_bias -= eta * hidden2_delta.sum(0) / len(batch)
 
   hidden1_w *= (1. - eta * decay)
   hidden1_w -= eta * np.dot(x[batch,:].T, hidden1_delta) / len(batch)
-  hidden1_bias -= eta * hidden1_delta.sum() / len(batch)
+  hidden1_bias -= eta * hidden1_delta.sum(0) / len(batch)
 
   batch = np.random.randint(0, x.shape[0], Nbatch)
   batch = np.unique(batch)

@@ -98,5 +98,31 @@ int main(int argc, char **argv) {
 
   assert_condition(g.sum() == 13.);
 
+  Matrix<2, 1> growsum = g.row_sum();
+  assert_condition(growsum(0, 0) == 2.);
+  assert_condition(growsum(1, 0) == 11.);
+
+  Matrix<1, 2> gcolsum = g.column_sum();
+  assert_condition(gcolsum(0, 0) == 3.);
+  assert_condition(gcolsum(0, 1) == 10.);
+
+  Matrix<2, 2> h = g + gcolsum;
+  assert_condition(h(0, 0) == 3.);
+  assert_condition(h(0, 1) == 12.);
+  assert_condition(h(1, 0) == 6.);
+  assert_condition(h(1, 1) == 18.);
+
+  Matrix<2, 2> i = h - g;
+  assert_condition(i(0, 0) == 3.);
+  assert_condition(i(0, 1) == 10.);
+  assert_condition(i(1, 0) == 3.);
+  assert_condition(i(1, 1) == 10.);
+
+  Matrix<2, 2> j = i.transpose();
+  assert_condition(j(0, 0) == 3.);
+  assert_condition(j(0, 1) == 3.);
+  assert_condition(j(1, 0) == 10.);
+  assert_condition(j(1, 1) == 10.);
+
   return 0;
 }

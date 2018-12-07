@@ -26,6 +26,8 @@
 #ifndef MATRIX_HPP
 #define MATRIX_HPP
 
+#include <cinttypes>
+
 /**
  * @brief _M_ x _N_ matrix.
  */
@@ -139,6 +141,51 @@ public:
     }
     return result;
   }
+
+  /**
+   * @brief Get the sum of all the rows in the matrix.
+   *
+   * @return Sum of all the rows in the matrix.
+   */
+  inline Matrix<_M_, 1> row_sum() const {
+    Matrix<_M_, 1> result;
+    for (uint_fast32_t m = 0; m < _M_; ++m) {
+      for (uint_fast32_t n = 0; n < _N_; ++n) {
+        result(m, 0) += _matrix[m][n];
+      }
+    }
+    return result;
+  }
+
+  /**
+   * @brief Get the sum of all the columns in the matrix.
+   *
+   * @return Sum of all the columns in the matrix.
+   */
+  inline Matrix<1, _N_> column_sum() const {
+    Matrix<1, _N_> result;
+    for (uint_fast32_t m = 0; m < _M_; ++m) {
+      for (uint_fast32_t n = 0; n < _N_; ++n) {
+        result(0, n) += _matrix[m][n];
+      }
+    }
+    return result;
+  }
+
+  /**
+   * @brief Get the transposed of this matrix.
+   *
+   * @return Transposed of this matrix.
+   */
+  inline Matrix<_N_, _M_> transpose() const {
+    Matrix<_N_, _M_> mT;
+    for (uint_fast32_t m = 0; m < _M_; ++m) {
+      for (uint_fast32_t n = 0; n < _N_; ++n) {
+        mT(n, m) = _matrix[m][n];
+      }
+    }
+    return mT;
+  }
 };
 
 /**
@@ -207,6 +254,46 @@ static inline Matrix<_M_, _N_> operator*(const double s,
                                          const Matrix<_M_, _N_> &a) {
   Matrix<_M_, _N_> b(a);
   return b *= s;
+}
+
+/**
+ * @brief Add the second matrix to the first one, with each column of the second
+ * matrix being added to every element of the corresponding column in the first
+ * matrix.
+ *
+ * @param a First matrix.
+ * @param b Second matrix.
+ * @return Resulting matrix.
+ */
+template <uint_fast32_t _M_, uint_fast32_t _N_>
+static inline Matrix<_M_, _N_> operator+(const Matrix<_M_, _N_> &a,
+                                         const Matrix<1, _N_> &b) {
+  Matrix<_M_, _N_> result;
+  for (uint_fast32_t m = 0; m < _M_; ++m) {
+    for (uint_fast32_t n = 0; n < _N_; ++n) {
+      result(m, n) = a(m, n) + b(0, n);
+    }
+  }
+  return result;
+}
+
+/**
+ * @brief Subtract the second matrix from the first one.
+ *
+ * @param a First matrix.
+ * @param b Second matrix.
+ * @return Resulting matrix.
+ */
+template <uint_fast32_t _M_, uint_fast32_t _N_>
+static inline Matrix<_M_, _N_> operator-(const Matrix<_M_, _N_> &a,
+                                         const Matrix<_M_, _N_> &b) {
+  Matrix<_M_, _N_> result;
+  for (uint_fast32_t m = 0; m < _M_; ++m) {
+    for (uint_fast32_t n = 0; n < _N_; ++n) {
+      result(m, n) = a(m, n) - b(m, n);
+    }
+  }
+  return result;
 }
 
 #endif // MATRIX_HPP
